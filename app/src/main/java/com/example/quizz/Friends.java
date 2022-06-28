@@ -2,7 +2,9 @@ package com.example.quizz;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,47 +18,63 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 
 public class Friends extends AppCompatActivity {
-    private ArrayList<String> friends;
-    private ArrayAdapter<String> adapter;
-    private ListView friendList;
+    public MutableLiveData<ArrayList<Utilisateur>> listFriends = new MutableLiveData<ArrayList<Utilisateur>>();
+    public Button start;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        String mail = intent.getStringExtra("mail");
+        Bundle bundle = intent.getExtras();
 
-        // Get the
-        friends = new ArrayList<String>() {};
-        findFriends(mail).observe(this, new Observer<ArrayList<String>>() {
+        String username = bundle.getString("mail");
+
+        Database.getScore().observe(this, new Observer<ArrayList<Utilisateur>>() {
+            @Override
+            public void onChanged(ArrayList<Utilisateur> strings) {
+                if(strings != null)listFriends.setValue(strings);
+            }
+        });
+
+        Database.findFriends(username).observe(this, new Observer<ArrayList<String>>() {
             @Override
             public void onChanged(ArrayList<String> strings) {
-                friends = strings;
-                adapter = new ArrayAdapter<String>(Friends.this, android.R.layout.simple_list_item_1, friends);
-                friendList = findViewById(R.id.friendList);
-                friendList.setAdapter(adapter);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(Friends.this, android.R.layout.simple_list_item_1, strings);
+                ListView listView = (ListView)findViewById(R.id.friendList);
+                listView.setAdapter(adapter);
+                ArrayList<Integer> listeScore = new ArrayList<Integer>();
+                if(listFriends != null) {
+                    for(Utilisateur u : listFriends.getValue()) {
+                        for(int i = 0; i < strings.size(); i++) {
+                            if(u.pseudo.equals(strings.get(i))) {
+                                listeScore.add(u.points);
+
+                            }
+                        }
+                    }
+                    ArrayAdapter<Integer> adapterScore = new ArrayAdapter<Integer>(Friends.this, android.R.layout.simple_list_item_1, listeScore);
+                    ListView listViewScore = (ListView)findViewById(R.id.scoreList);
+                    listViewScore.setAdapter(adapterScore);
+                }
             }
         });
 
-    }
+        this.start = this.findViewById(R.id.startButton);
 
-
-
-    public static MutableLiveData<ArrayList<String>> findFriends(String username) {
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
-        MutableLiveData<ArrayList<String>> listFriend = new MutableLiveData<>(new ArrayList<String>());
-        database.collection("utilisateurs").document(username).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        this.start.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                ArrayList<String> friends = (ArrayList) documentSnapshot.getData().get("listFriend");
-                listFriend.setValue(friends);
-            }
+            public void onClick(View view) {
+                Intent intent = new Intent(Friends.this, QuestionActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("username", username);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                finish();
+            };
         });
-        return listFriend;
     }
-
 
 }
