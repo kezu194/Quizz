@@ -18,39 +18,65 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:layout_weight="2"
             android:gravity="center"
             android:text="TextView"
             android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:orientation="vertical"
             android:padding="10dp">
 
             <Button
                 android:id="@+id/reponse0"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_margin="10dp"
-                android:layout_weight="1"
                 android:text="Button" />
 
             <Button
                 android:id="@+id/reponse1"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_margin="10dp"
-                android:layout_weight="1"
                 android:text="Button" />
 
             <Button
                 android:id="@+id/reponse2"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_margin="10dp"
-                android:layout_weight="1"
                 android:text="Button" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/compteurNextQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:padding="20dp"
+            android:textSize="20sp"
+            android:text="" />
+
+
+        <TextView
+            android:id="@+id/compteur"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center|top"
+            android:padding="20dp"
+            android:text="Compteur : "
+            android:textSize="20sp" />
+
+
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

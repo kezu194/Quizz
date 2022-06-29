@@ -4,22 +4,20 @@ import java.util.ArrayList;
 
 public class Utilisateur {
     public String pseudo;
-    public String identifiant;
-    public String password;
-    public ArrayList<Utilisateur> listFriends;
-    public Integer points;
+    public String mdp;
+    public ArrayList<String> listFriends;
+    public Integer score;
 
-    public Utilisateur(String pseudo, String identifiant, String password, ArrayList<Utilisateur> listFriends, Integer points) {
+    public Utilisateur(String pseudo, String mdp, ArrayList<String> listFriends, Integer score) {
         this.pseudo = pseudo;
-        this.identifiant = identifiant;
-        this.password = password;
+        this.mdp = mdp;
         this.listFriends = listFriends;
-        this.points = points;
+        this.score = score;
     }
 
-    public Utilisateur(String pseudo, Integer points) {
+    public Utilisateur(String pseudo, Integer score) {
         this.pseudo = pseudo;
-        this.points = points;
+        this.score = score;
     }
 
     public Utilisateur() {
@@ -34,35 +32,37 @@ public class Utilisateur {
         this.pseudo = pseudo;
     }
 
-    public String getIdentifiant() {
-        return identifiant;
+    public String getMdp() {
+        return mdp;
     }
 
-    public void setIdentifiant(String identifiant) {
-        this.identifiant = identifiant;
+    public void setMdp(String mdp) {
+        this.mdp = mdp;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public ArrayList<Utilisateur> getListFriends() {
+    public ArrayList<String> getListFriends() {
         return listFriends;
     }
 
-    public void setListFriends(ArrayList<Utilisateur> listFriends) {
+    public void setListFriends(ArrayList<String> listFriends) {
         this.listFriends = listFriends;
     }
 
-    public Integer getPoints() {
-        return points;
+    public Integer getScore() {
+        return score;
     }
 
-    public void setPoints(Integer points) {
-        this.points += points;
+    public void setScore(Integer score) {
+        this.score += score;
+    }
+
+    @Override
+    public String toString() {
+        return "Utilisateur{" +
+                "pseudo='" + pseudo + '\'' +
+                ", mdp='" + mdp + '\'' +
+                ", listFriends=" + listFriends +
+                ", score=" + score +
+                '}';
     }
 }

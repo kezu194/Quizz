@@ -3,6 +3,7 @@ package com.example.quizz;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -73,6 +74,28 @@ public class Database {
             }
         });
         return listQuestions;
+    }
+
+    public static void updateScore(String username){
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        MutableLiveData<Utilisateur> userMutable = new MutableLiveData<Utilisateur>();
+        database.collection("utilisateurs").document(username).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                long score = (long) documentSnapshot.getData().get("score");
+                ArrayList<String> friendList = (ArrayList<String>) documentSnapshot.getData().get("listFriend");
+                String mdp = (String) documentSnapshot.getData().get("mdp");
+                Utilisateur user = new Utilisateur(username, mdp, friendList, (int)score);
+                userMutable.setValue(user);
+            }
+        });
+        Map<String, Object> map = new HashMap<String, Object>() {};
+        map.put("listFriend", userMutable.getValue().getListFriends());
+        map.put("mdp", userMutable.getValue().getMdp());
+        map.put("pseudo", username);
+        map.put("score", userMutable.getValue().getScore()+10);
+        database.collection("utilisateurs").document(username).update(map);
+
     }
 
 }

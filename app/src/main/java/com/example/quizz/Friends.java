@@ -11,10 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 
 public class Friends extends AppCompatActivity {
@@ -50,7 +46,7 @@ public class Friends extends AppCompatActivity {
                     for(Utilisateur u : listFriends.getValue()) {
                         for(int i = 0; i < strings.size(); i++) {
                             if(u.pseudo.equals(strings.get(i))) {
-                                listeScore.add(u.points);
+                                listeScore.add(u.score);
 
                             }
                         }
@@ -70,9 +66,9 @@ public class Friends extends AppCompatActivity {
                 Intent intent = new Intent(Friends.this, QuestionActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
+                Database.updateScore(username);
                 intent.putExtras(bundle);
                 startActivity(intent);
-                finish();
             };
         });
     }
