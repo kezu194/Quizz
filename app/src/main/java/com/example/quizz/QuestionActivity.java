@@ -36,8 +36,6 @@ public class QuestionActivity extends AppCompatActivity implements View.OnClickL
     private CountDownTimer countDownNextQuestion;
     public String username;
     public Observer<Utilisateur> observer;
-    public TextView scoreView;
-    public int score;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +52,12 @@ public class QuestionActivity extends AppCompatActivity implements View.OnClickL
         intitule = (TextView) findViewById(R.id.intitule);
         compteur = (TextView) findViewById(R.id.compteur);
         compteurNextQuestion = (TextView) findViewById(R.id.compteurNextQuestion);
-        scoreView = (TextView) findViewById(R.id.score);
 
         observer = new Observer<Utilisateur>() {
             @Override
             public void onChanged(Utilisateur utilisateur) {
                 if(utilisateur !=null){
                     user.setValue(utilisateur);
-                    System.out.println(user.getValue());
-                    score=user.getValue().getScore()+10;
                     Map<String, Object> map = new HashMap<String, Object>() {};
                     map.put("listFriend", user.getValue().getListFriends());
                     map.put("mdp", user.getValue().getMdp());
@@ -78,8 +73,6 @@ public class QuestionActivity extends AppCompatActivity implements View.OnClickL
             public void onChanged(ArrayList<Question> questions) {
                 if(questions != null)listQuestions.setValue(questions);
                 if(listQuestions.getValue().size() != 0) {
-                    scoreView.setText(String.valueOf(score));
-
                     //On sélectionne une question au hasard
                     int r = new Random().nextInt(listQuestions.getValue().size());
                     Question q = listQuestions.getValue().get(r);

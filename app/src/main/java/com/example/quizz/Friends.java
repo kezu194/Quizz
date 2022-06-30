@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Friends extends AppCompatActivity {
     public MutableLiveData<ArrayList<Utilisateur>> listFriends = new MutableLiveData<ArrayList<Utilisateur>>();
@@ -31,7 +32,19 @@ public class Friends extends AppCompatActivity {
         Database.getScore().observe(this, new Observer<ArrayList<Utilisateur>>() {
             @Override
             public void onChanged(ArrayList<Utilisateur> strings) {
-                if(strings != null)listFriends.setValue(strings);
+                if(strings != null){
+                    listFriends.setValue(strings);
+                    ArrayAdapter<Utilisateur> adapter = new ArrayAdapter<Utilisateur>(Friends.this, android.R.layout.simple_list_item_1, strings);
+                    ListView listView = (ListView)findViewById(R.id.friendList);
+                    ListView listViewScore = (ListView)findViewById(R.id.scoreList);
+
+                    ArrayList<Integer> listScore = new ArrayList<Integer>();
+                    ArrayList<String> listSpeudo = new ArrayList<String>();
+
+                    for(Utilisateur user : Objects.requireNonNull(listFriends.getValue())){
+                        System.out.println(user);
+                    }
+                }
             }
         });
 
