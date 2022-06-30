@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Database {
 
@@ -76,9 +77,9 @@ public class Database {
         return listQuestions;
     }
 
-    public static void updateScore(String username){
+    public static MutableLiveData<Utilisateur> updateScore(String username){
         FirebaseFirestore database = FirebaseFirestore.getInstance();
-        MutableLiveData<Utilisateur> userMutable = new MutableLiveData<Utilisateur>();
+        MutableLiveData<Utilisateur> userMutable = new MutableLiveData<>();
         database.collection("utilisateurs").document(username).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -89,13 +90,12 @@ public class Database {
                 userMutable.setValue(user);
             }
         });
-        Map<String, Object> map = new HashMap<String, Object>() {};
-        map.put("listFriend", userMutable.getValue().getListFriends());
-        map.put("mdp", userMutable.getValue().getMdp());
-        map.put("pseudo", username);
-        map.put("score", userMutable.getValue().getScore()+10);
-        database.collection("utilisateurs").document(username).update(map);
+        return userMutable;
+    }
 
+    public static void update(Map<String, Object> map, String username){
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        database.collection("utilisateurs").document(username).update(map);
     }
 
 }

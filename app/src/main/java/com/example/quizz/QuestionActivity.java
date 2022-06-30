@@ -1,5 +1,7 @@
 package com.example.quizz;
 
+import static java.lang.Integer.valueOf;
+
 import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
@@ -15,10 +17,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class QuestionActivity extends AppCompatActivity implements View.OnClickListener {
     public MutableLiveData<ArrayList<Question>> listQuestions = new MutableLiveData<ArrayList<Question>>();
+    public MutableLiveData<Utilisateur> user = new MutableLiveData<Utilisateur>();
     public Button reponse0;
     public Button reponse1;
     public Button reponse2;
@@ -29,7 +34,10 @@ public class QuestionActivity extends AppCompatActivity implements View.OnClickL
     private int counter = 10;
     private CountDownTimer countDown;
     private CountDownTimer countDownNextQuestion;
-
+    public String username;
+    public Observer<Utilisateur> observer;
+    public TextView scoreView;
+    public int score;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +46,7 @@ public class QuestionActivity extends AppCompatActivity implements View.OnClickL
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        String username = bundle.getString("username");
+        username = bundle.getString("username");
 
         reponse0 = (Button) findViewById(R.id.reponse0);
         reponse1 = (Button) findViewById(R.id.reponse1);
@@ -46,13 +54,32 @@ public class QuestionActivity extends AppCompatActivity implements View.OnClickL
         intitule = (TextView) findViewById(R.id.intitule);
         compteur = (TextView) findViewById(R.id.compteur);
         compteurNextQuestion = (TextView) findViewById(R.id.compteurNextQuestion);
+        scoreView = (TextView) findViewById(R.id.score);
 
+        observer = new Observer<Utilisateur>() {
+            @Override
+            public void onChanged(Utilisateur utilisateur) {
+                if(utilisateur !=null){
+                    user.setValue(utilisateur);
+                    System.out.println(user.getValue());
+                    score=user.getValue().getScore()+10;
+                    Map<String, Object> map = new HashMap<String, Object>() {};
+                    map.put("listFriend", user.getValue().getListFriends());
+                    map.put("mdp", user.getValue().getMdp());
+                    map.put("pseudo", username);
+                    map.put("score", user.getValue().getScore()+10);
+                    Database.update(map, username);
+                }
+            }
+        };
 
         Database.getQuestion().observe(this, new Observer<ArrayList<Question>>() {
             @Override
             public void onChanged(ArrayList<Question> questions) {
                 if(questions != null)listQuestions.setValue(questions);
                 if(listQuestions.getValue().size() != 0) {
+                    scoreView.setText(String.valueOf(score));
+
                     //On sélectionne une question au hasard
                     int r = new Random().nextInt(listQuestions.getValue().size());
                     Question q = listQuestions.getValue().get(r);
@@ -139,6 +166,7 @@ public class QuestionActivity extends AppCompatActivity implements View.OnClickL
                 if(reponse0.getText()==bonneReponse){
                     reponse0.setBackgroundColor(Color.GREEN);
                     compteur.setText("Bonne réponse !");
+                    Database.updateScore(username).observe(this, observer);
                 }
                 else{
                     reponse0.setBackgroundColor(Color.RED);
@@ -149,6 +177,7 @@ public class QuestionActivity extends AppCompatActivity implements View.OnClickL
                 if(reponse1.getText()==bonneReponse){
                     reponse1.setBackgroundColor(Color.GREEN);
                     compteur.setText("Bonne réponse !");
+                    Database.updateScore(username).observe(this, observer);
                 }
                 else{
                     reponse1.setBackgroundColor(Color.RED);
@@ -159,6 +188,7 @@ public class QuestionActivity extends AppCompatActivity implements View.OnClickL
                 if(reponse2.getText()==bonneReponse){
                     reponse2.setBackgroundColor(Color.GREEN);
                     compteur.setText("Bonne réponse !");
+                    Database.updateScore(username).observe(this, observer);
                 }
                 else{
                     reponse2.setBackgroundColor(Color.RED);
@@ -172,5 +202,7 @@ public class QuestionActivity extends AppCompatActivity implements View.OnClickL
         countDown.cancel();
         counter=3;
         countDownNextQuestion.start();
+
+
     }
 }

@@ -66,7 +66,6 @@ public class Friends extends AppCompatActivity {
                 Intent intent = new Intent(Friends.this, QuestionActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
-                Database.updateScore(username);
                 intent.putExtras(bundle);
                 startActivity(intent);
             };
